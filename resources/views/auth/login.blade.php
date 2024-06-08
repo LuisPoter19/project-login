@@ -8,7 +8,8 @@
     <title>Login</title>
 </head>
 <body>
-    <form class="container">
+    <form class="container" action="{{Route('login')}}" method="POST">
+        @csrf
         <div class="mb-3">
           <label for="email" class="form-label">Email</label>
           <input type="email" class="form-control" id="email" aria-describedby="email" name="email">
