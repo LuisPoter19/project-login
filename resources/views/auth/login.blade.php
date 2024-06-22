@@ -19,6 +19,7 @@
           <input type="password" class="form-control" id="password" name="password">
         </div>
         <button type="submit" class="btn btn-primary">Ingresar</button>
+        <a href="{{Route('register')}}" class="btn btn-primary">Registrarse</a>
       </form>
 </body>
 </html>

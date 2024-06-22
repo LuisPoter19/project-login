@@ -53,4 +53,9 @@ class AuthController extends Controller
             'email' => 'Credenciales incorrectas',
         ]);
     }
+
+    public function register()
+    {
+        return view('auth.register');
+    }
 }
