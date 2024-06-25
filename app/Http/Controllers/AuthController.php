@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -54,8 +55,20 @@ class AuthController extends Controller
         ]);
     }
 
-    public function register()
+    public function registerForm()
     {
         return view('auth.register');
     }
+
+    public function newRegister(Request $request)
+        {
+           $user = new User();
+           $user->timestamps = false;
+           $user->email = $request->get('email');
+           $user->password = Hash::make($request->get('password'));
+           $user->save();
+
+           return Redirect::route('viewLogin');    
+           
+        }
 }
