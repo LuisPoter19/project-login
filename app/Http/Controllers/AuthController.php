@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -62,13 +63,22 @@ class AuthController extends Controller
 
     public function newRegister(Request $request)
         {
+           $validator = Validator::make($request->all(), [
+                'email' => 'required|email|unique:users',
+                'password' => 'required|string|min:8|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|different:username'
+           ]);
+           
+           if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+           }
+
            $user = new User();
            $user->timestamps = false;
-           $user->email = $request->get('email');
-           $user->password = Hash::make($request->get('password'));
+           $user->email = $request->email;
+           $user->password = Hash::make($request->password);
            $user->save();
 
-           return Redirect::route('viewLogin');    
-           
+           #return Redirect::route('viewLogin');    
+           return redirect()->route('viewLogin')->with('succes', 'Registro Exitoso. Por favor inicia sesión');
         }
 }
