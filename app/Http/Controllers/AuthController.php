@@ -19,6 +19,21 @@ class AuthController extends Controller
     public function login(Request $request)//Metodo que se encargara de generar la autenticación del usuario.
     
     {
+        $messages = [
+            'email.required' => 'El campo de correo electrónico es obligatorio.',
+            'email.email' => 'Por favor, ingrese un correo electrónico válido.',
+            'password.required' => 'El campo de contraseña es obligatorio.',
+        ];
+        
+        /*$request->validate([
+            $messages
+        ]);*/
+
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|different:username'
+        ], $messages);
+
         $credentials = $request->only('email', 'password');/*Request se encargara de capturar los datos enviados desde el formulario de autenticación,
         y only solo capturara los datos que se desean obtener, estos se almacenaran en $credentials como un array asosiativo: 
         ['email' => 'valor_email', 'password' => 'valor_password']*/
@@ -47,6 +62,7 @@ class AuthController extends Controller
             -----------------------------*/
             #return redirect()->intended('/main-page');
 
+            $request->session()->regenerate();
             return Redirect::route('main-page');/*Después de la autenticación, se redireccionará al usuario a la ruta especificada,
             en este caso main-page*/
         }
