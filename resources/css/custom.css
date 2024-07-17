@@ -1,3 +1,10 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Oculta el desbordamiento horizontal */
+    height: 100%; /* Asegura que el body ocupe el 100% de la altura de la ventana */
+}
+
 .form-group {
     position: relative;
 }
@@ -9,6 +16,7 @@
     transform: translateY(-50%);
     transition: all 0.2s ease;
     color: #aaa;
+    pointer-events: none;
     
 }
 
@@ -47,6 +55,9 @@
     justify-content: center;
     align-items: center;
     /*border: 10px solid blue;*/
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
 }
 
 .project-login {
@@ -77,3 +88,33 @@
     display: block; /* Asegura que se muestre como un bloque debajo del input */
 }
 
+.form-register {
+    max-width: 300px; /* Ajusta el ancho máximo del contenedor */
+    width: 100%; /* Asegura que el contenedor use el 100% del ancho disponible */
+    margin: 0 auto; /* Centra el contenedor horizontalmente */
+    padding: 20px; /* Espaciado interior del contenedor */
+    margin-top: 0px;
+    height: 150px;
+
+   
+}
+
+.my-custom-popup {
+    max-height: 350px; /* Ajusta la altura máxima del modal */
+    height: 350px; /* Ajusta la altura del modal */
+    /*overflow-y: auto; /* Permite el desplazamiento vertical si el contenido es mayor que la altura del modal */
+}
+
+.container-register {
+    /* Ajusta el ancho máximo del contenedor principal */
+    /* Asegura que el contenedor principal use el 100% del ancho disponible */
+   /* Centra el contenedor principal horizontalmente */
+   height: 22vh; /* Asegura que el contenedor ocupe al menos el 100% de la altura de la vista */
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   /*border: 10px solid blue;*/
+   max-width: 100%;
+   margin: 0 auto;
+   padding: 0;
+}

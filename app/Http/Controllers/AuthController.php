@@ -19,20 +19,21 @@ class AuthController extends Controller
     public function login(Request $request)//Metodo que se encargara de generar la autenticación del usuario.
     
     {
-        $messages = [
-            'email.required' => 'El campo de correo electrónico es obligatorio.',
-            'email.email' => 'Por favor, ingrese un correo electrónico válido.',
-            'password.required' => 'El campo de contraseña es obligatorio.',
-        ];
-        
-        /*$request->validate([
-            $messages
-        ]);*/
 
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:8|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|different:username'
-        ], $messages);
+        $request->validate([/*De esta manera podremos validar los datos enviados desde el cliente al servidor, y antes de ser
+            procesados se comprueba que si cumpla con las condiciones*/
+            'email' => 'required|email',//El email es obligatorio y debe ser un correo electronico valido.
+            'password' => [
+                'required',//El campo contraseña es obligatorio.
+                'string',//Debe ser una cadena de texto.
+                'min:8',//Debe tener minimo 8 caracteres.
+                'regex:/[a-z]/',//Debe tener al menos una letra minuscula.
+                'regex:/[A-Z]/',//Debe tener al menos una letra mayuscula.
+                'regex:/[0-9]/',//Debe tener al menos un número.
+                'regex:/[@$!%*#?&]/',//Debe tener al menos un caracter especial.
+                'different:username'//Debe ser diferente al campo de usuario.
+                ]
+        ]);
 
         $credentials = $request->only('email', 'password');/*Request se encargara de capturar los datos enviados desde el formulario de autenticación,
         y only solo capturara los datos que se desean obtener, estos se almacenaran en $credentials como un array asosiativo: 
@@ -76,16 +77,26 @@ class AuthController extends Controller
     {
         return view('auth.register');
     }
-
+    
     public function newRegister(Request $request)
         {
-           $validator = Validator::make($request->all(), [
+           $validator = Validator::make($request->all(), [/*Facade que nos permitira implementar una validación. "all" nos
+            devolvera todos los datos de la solicitud como un array asociativo*/
                 'email' => 'required|email|unique:users',
-                'password' => 'required|string|min:8|regex:/[a-z]/|regex:/[A-Z]/|regex:/[0-9]/|regex:/[@$!%*#?&]/|different:username'
+                'password' => [
+                    'required',//El campo contraseña es obligatorio.
+                    'string',//Debe ser una cadena de texto.
+                    'min:8',//Debe tener minimo 8 caracteres.
+                    'regex:/[a-z]/',//Debe tener al menos una letra minuscula.
+                    'regex:/[A-Z]/',//Debe tener al menos una letra mayuscula.
+                    'regex:/[0-9]/',//Debe tener al menos un número.
+                    'regex:/[@$!%*#?&]/',//Debe tener al menos un caracter especial.
+                    'different:username'//Debe ser diferente al campo de usuario.
+                    ]
            ]);
            
-           if ($validator->fails()) {
-                return back()->withErrors($validator)->withInput();
+           if ($validator->fails()) {//Se comprueba si la validación a fallado.
+                return back()->withErrors($validator)->withInput();//Si ha fallado se devuelve a la pagina del login con el error generado.
            }
 
            $user = new User();
