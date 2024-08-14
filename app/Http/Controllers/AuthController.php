@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\ResetPasswordNotification;
 use App\Models\User;
 
 class AuthController extends Controller
@@ -73,12 +76,12 @@ class AuthController extends Controller
         ]);
     }
 
-    public function registerForm()
+    /*public function registerForm()//Método que redirigira a la pagina de registro. No esta operativa, ya que, el formulario se mostrará con una alerta.
     {
         return view('auth.register');
-    }
+    }*/
     
-    public function newRegister(Request $request)
+    public function newRegister(Request $request)//Metodo que procesará el registro de un nuevo usuario.
         {
            $validator = Validator::make($request->all(), [/*Facade que nos permitira implementar una validación. "all" nos
             devolvera todos los datos de la solicitud como un array asociativo*/
@@ -107,5 +110,56 @@ class AuthController extends Controller
 
            #return Redirect::route('viewLogin');    
            return redirect()->route('viewLogin')->with('succes', 'Registro Exitoso. Por favor inicia sesión');
+        }
+
+    public function recoverPassword(Request $request)//Método que procesará el envío del correo para crear una nueva clave.
+        {
+            $request->validate([
+                'email' => ['required', 'email'],
+            ]);
+    
+            $status = Password::sendResetLink(/*sendResetLink es un método que se encargará de recibir el correo,
+                valida que exista en la base de datos, si es así se genera un token unico que se almacenara en la tabla de tokens,
+                y por ultimo envía el correo electrónico al usuario.*/
+               $request->only('email')
+            );
+    
+            return $status == Password::RESET_LINK_SENT/*Se valida el resultado de la variable $status que contiene el resultado de
+            Password::sendResetLink, si este es igual a Password::RESET_LINK_SENT, quiere decir que el enlace de reestablecimiento
+            se ha enviado de manera correcta. */
+                ? redirect()->route('viewLogin')->with('status', __($status))/*El signo ? es una forma abreviada de un "if-else",
+                si la validación es verdadera se ejecuta esta línea.*/
+                : back()->withErrors(['email' => __($status)]);//Si la validación es falsa, se ejecuta esta línea.
+        }
+
+        public function showResetForm($token)/*Este metodo nos mostrará el formulario para crear una nueva clave, y se pasa
+        por parametro el token que se ha creado y almacenado en la base de datos al solicitar recuperar la clave, este token
+        se envía junto a la url de reestablecimiento, para luego pasar el token a la vista.*/
+        {
+            return view('auth.reset', ['token' => $token]);
+        } 
+    
+        public function reset(Request $request)//Este método se encarga de procesar los datos y crear una nueva clave.
+        {
+            $request->validate([
+                'token' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|confirmed|min:8',
+            ]);
+    
+            $status = Password::reset(/*Este metodo recibe dos argumentos, el $request y la función. Se procesan los datos del
+                formulario y se valida en la base de datos que el token envíado corresponda con el email, si, si corresponde,
+                se procede a ejecutar la función. */
+                $request->only('email', 'password', 'password_confirmation', 'token'),
+                function ($user, $password) {/*Se reciben dos parametros, $user representa el usuario completo recuperado desde la
+                base de datos, con todos sus atributos y $password es la nueva clave.*/
+                    $user->password = bcrypt($password);
+                    $user->save();  
+                }
+            );
+    
+            return $status == Password::PASSWORD_RESET
+                        ? redirect()->route('viewLogin')->with('status', __($status))
+                        : back()->withErrors(['email' => [__($status)]]);
         }
 }

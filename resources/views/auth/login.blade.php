@@ -16,8 +16,8 @@
         <label for="password" class="placeholder-label">Contraseña</label>
     </div>
     <button type="submit" class="btn btn-primary mb-3 w-100" id="loginBtn">Ingresar</button>
-    <a class="btn btn-primary w-100" id="registerBtn">Registrarse</a><br>
-
+    <a class="btn btn-primary w-100 mb-3" id="registerBtn">Registrarse</a><br>
+    <a class="btn btn-primary w-100" id="recover">Recuperar clave</a>
   </form>
 </div>
 

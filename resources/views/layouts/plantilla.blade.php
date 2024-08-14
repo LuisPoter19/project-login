@@ -23,7 +23,9 @@
         window.routes = {//Variable global para pasarla a JS.
             register: "{{ route('register') }}",/*"register" es una propiedad que nos permitira almacenar la ruta, para
             posteriormente pasarla a JS y ejecutar el controlador en Laravel.*/
+
+            recover: "{{ route('recover') }}",
         };
-    </script>
+    </script> 
 </body>
 </html>

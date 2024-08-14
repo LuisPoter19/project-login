@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {/*Este método nos per
         Swal.fire({//"Swal.fire" es una función que nos permitira crear modals o ventanas/alertas emergentes.
             title: '¡Error!',//Titulo de la alerta.
             text: window.errorMessage,//Mostrara el error que ha devuelto el servidor y que ha sido capturado por la variable global.
-            icon: 'error',//Mostrará un icono de error, otross tipos de iconos: (success, warning, info, question).
+            icon: 'error',//Mostrará un icono de error, otros tipos de iconos: (success, warning, info, question).
             confirmButtonColor: '#3085d6',//Color del boton
             confirmButtonText: '¡Entendido!',//Texto del boton
             width: '400px'//Ancho de la alerta
@@ -79,18 +79,47 @@ document.addEventListener('DOMContentLoaded', function() {/*Este método nos per
                         <form class="form-register p-4rounded shadow-lg" id="registerForm" method="POST" action="${window.routes.register}">
                             <input type="hidden" name="_token" value="${csrfToken}"> <!--input no visible que incluye un token CSRF-->
                             <div class="form-group mb-4">
-                                <input type="email" id="email" class="form-control" placeholder=" " name="email" aria-describedby="email">
-                                <label for="email" class="placeholder-label">Email</label>
+                                <input type="email" id="email-register" class="form-control" placeholder=" " name="email" aria-describedby="email-register" value="${document.getElementById('email-register') ? document.getElementById('email-register').value : ''}">
+                                <label for="email-register" class="placeholder-label">Email</label>
                             </div>
                             <div class="form-group">
-                                <input type="password" id="password" class="form-control" placeholder=" " name="password">
-                                <label for="password" class="placeholder-label">Contraseña</label>
+                                <input type="password" id="password-register" class="form-control" placeholder=" " name="password">
+                                <label for="password-register" class="placeholder-label">Contraseña</label>
                             </div>
                         </form>
-                    </div
+                    </div>
                 `,
                 focusConfirm: false,
-                preConfirm: () => {//preConfirm asegura de que el formulario se envíe cuando el usuario confirme la acción. 
+                preConfirm: () => {//preConfirm asegura de que el formulario se envíe cuando el usuario confirme la acción.
+                    
+                    const email =  document.getElementById('email-register').value;
+                    const password = document.getElementById('password-register').value;
+                    let error = [];
+
+                    if (!email) {
+                        error.push('El campo de correo electrónico es obligatorio.');
+                    }else if (!/\S+@\S+\.\S+/.test(email)) {
+                        error.push('Por favor, ingrese un correo electrónico válido.');
+                    }
+
+                    if (!password) {
+                        error.push('El campo de contraseña es obligatorio.');
+                    }
+
+                    if (error.length > 0) {//Se valida la longitud de "errors", si es mayor a 0.
+                        Swal.fire({
+                            title: '¡Error!',
+                            html: error.join('<br>'),/*"join" permitira concatenar todos los errores almacenados en "errors" y cada
+                            mensaje estará separado por un salto de linea <br>*/
+                            icon: 'error',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: '¡Entendido!',
+                            width: '400px'
+                        });
+
+                        return false;
+                    }
+
                     document.getElementById('registerForm').submit();//Se Obtiene el formulario de registro.
                 },
                 confirmButtonText: 'Registrarse',
@@ -101,6 +130,56 @@ document.addEventListener('DOMContentLoaded', function() {/*Este método nos per
                 customClass: {//Nos permite añadir clases CSS personalizadas.
                     popup: 'my-custom-popup',
                 }
+        });
+        });
+
+        document.getElementById('recover').addEventListener('click', function() {
+            Swal.fire({
+                title:'Recuperar',
+                html:`
+                    <div>
+                        <form id="recoverPassword" method="POST" action="${window.routes.recover}">
+                            <input type="hidden" name="_token" value="${csrfToken}">
+                            <div>
+                                <label for="email-recover" class=" ">Email</label> 
+                                <input type="email" id="email-recover" class=" " name="email" required>    
+                            </div>                    
+                        </form>      
+                    </div>
+                `,
+                preConfirm: () => {
+
+                    const email = document.getElementById('email-recover').value;
+                    let errors = [];
+
+                    if (!email) {
+                        errors.push('El campo de correo electrónico es obligatorio.');
+                    }else if (!/\S+@\S+\.\S+/.test(email)) {
+                        errors.push('Por favor, ingrese un correo electrónico válido.');
+                    }
+
+                    if (errors.length > 0) {
+                        Swal.fire({
+                            title: '¡Error!',
+                            html: errors.join('<br>'),/*"join" permitira concatenar todos los errores almacenados en "errors" y cada
+                            mensaje estará separado por un salto de linea <br>*/
+                            icon: 'error',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: '¡Entendido!',
+                            width: '400px'
+                        });
+
+                        return false;
+                    }
+
+                    document.getElementById('recoverPassword').submit();
+                },
+                confirmButtonText: 'Envíar',
+                showCancelButton: true,
+                cancelButtonText: 'cancelar',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+
         });
     });
 });
