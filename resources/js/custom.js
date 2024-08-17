@@ -137,12 +137,12 @@ document.addEventListener('DOMContentLoaded', function() {/*Este método nos per
             Swal.fire({
                 title:'Recuperar',
                 html:`
-                    <div>
-                        <form id="recoverPassword" method="POST" action="${window.routes.recover}">
+                    <div class=" ">
+                        <form class="" id="recoverPassword" method="POST" action="${window.routes.recover}">
                             <input type="hidden" name="_token" value="${csrfToken}">
-                            <div>
-                                <label for="email-recover" class=" ">Email</label> 
-                                <input type="email" id="email-recover" class=" " name="email" required>    
+                            <div class="form-group">
+                                <input type="email" id="email-recover" class="form-control" name="email" placeholder=" " required>
+                                <label for="email-recover" class="placeholder-label">Email</label> 
                             </div>                    
                         </form>      
                     </div>
